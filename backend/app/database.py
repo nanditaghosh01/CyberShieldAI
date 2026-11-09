@@ -126,6 +126,7 @@ class DatabaseManager:
     def insert_user(self, user_data: dict) -> dict:
         if self.is_mongodb:
             self.db.users.insert_one(user_data)
+            user_data.pop("_id", None)
         else:
             conn = sqlite3.connect(self.sqlite_path)
             cursor = conn.cursor()
@@ -148,6 +149,7 @@ class DatabaseManager:
     def insert_scan(self, scan_data: dict) -> dict:
         if self.is_mongodb:
             self.db.scans.insert_one(scan_data)
+            scan_data.pop("_id", None)
         else:
             conn = sqlite3.connect(self.sqlite_path)
             cursor = conn.cursor()
@@ -219,6 +221,7 @@ class DatabaseManager:
     def insert_community_report(self, report_data: dict) -> dict:
         if self.is_mongodb:
             self.db.community_reports.insert_one(report_data)
+            report_data.pop("_id", None)
         else:
             conn = sqlite3.connect(self.sqlite_path)
             cursor = conn.cursor()
