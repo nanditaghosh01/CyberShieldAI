@@ -30,7 +30,7 @@ def perform_full_security_scan(target_url: str, user_id: str = "anonymous") -> d
     validate_public_target(hostname)
 
     scan_id = str(uuid.uuid4())
-    scan_timestamp = datetime.datetime.utcnow().isoformat()
+    scan_timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     # Module 1: AI-Powered Phishing Detection
     ai_result = predict_url(clean_url)

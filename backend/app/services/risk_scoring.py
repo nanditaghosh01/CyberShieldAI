@@ -103,27 +103,27 @@ def calculate_unified_risk_score(
 
     overall_score = round(min(max(overall_score, 0.0), 100.0), 1)
 
-    # Risk Category mapping
+    # Risk Category mapping (Using custom 5-color palette & harmful red shades)
     if overall_score <= 20.0:
         risk_category = "Low Risk"
         threat_class = "Legitimate"
-        color_code = "#10b981" # Green
+        color_code = "#a9d8de" # Swatch 3: Ice Blue / Aqua
     elif overall_score <= 40.0:
         risk_category = "Moderate Risk"
         threat_class = "Suspicious" if ai_pred != "Legitimate" else "Legitimate (Hardening Recommended)"
-        color_code = "#f59e0b" # Amber
+        color_code = "#457b9d" # Swatch 2: Steel Cerulean
     elif overall_score <= 60.0:
         risk_category = "Elevated Risk"
         threat_class = "Suspicious"
-        color_code = "#f97316" # Orange
+        color_code = "#f86b76" # Harmful alert red (light)
     elif overall_score <= 80.0:
         risk_category = "High Risk"
         threat_class = "Phishing" if ai_pred == "Phishing" else "High Threat"
-        color_code = "#ef4444" # Red
+        color_code = "#e83845" # Swatch 5: Harmful Primary Coral Red
     else:
         risk_category = "Critical Risk"
         threat_class = "Malicious"
-        color_code = "#dc2626" # Deep Crimson
+        color_code = "#a81b26" # Harmful Deep Crimson Red
 
     # Consolidate Major Findings
     major_findings = []

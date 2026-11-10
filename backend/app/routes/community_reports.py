@@ -20,7 +20,7 @@ def submit_report(report_in: CommunityReportCreate, user: dict = Depends(get_cur
     Submits a new threat report for community validation.
     """
     report_id = str(uuid.uuid4())
-    submitted_at = datetime.datetime.utcnow().isoformat()
+    submitted_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
     submitted_by = user.get("username", "Anonymous Contributor")
 
     report_record = {

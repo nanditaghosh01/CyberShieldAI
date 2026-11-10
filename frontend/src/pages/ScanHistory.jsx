@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { History, Search, Download, ExternalLink, Filter } from 'lucide-react';
+import { History, Search, Download, ExternalLink, Filter, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { ThreatBadge } from '../components/ThreatBadge';
 import { api } from '../services/api';
 
@@ -35,7 +35,7 @@ export const ScanHistory = ({ onOpenScan }) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `CyberShield_Audit_${scan.domain || 'scan'}.txt`;
+      a.download = `CyberShield_Report_${scan.domain || 'scan'}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -44,20 +44,30 @@ export const ScanHistory = ({ onOpenScan }) => {
     }
   };
 
-  const riskFilters = ["All", "Low Risk", "Moderate Risk", "Elevated Risk", "High Risk", "Critical Risk"];
+  const riskFilters = [
+    { label: "All Scans", value: "All" },
+    { label: "Low Risk", value: "Low Risk" },
+    { label: "Moderate Risk", value: "Moderate Risk" },
+    { label: "Elevated Risk", value: "Elevated Risk" },
+    { label: "High Risk", value: "High Risk" },
+    { label: "Critical Risk", value: "Critical Risk" }
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl bg-[#0c1424] border border-cyan-500/30 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 max-w-6xl mx-auto">
+      {/* Header Card */}
+      <div className="rounded-2xl bg-[#122035] border border-[#274366] p-6 sm:p-7 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <History className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-lg font-bold text-white tracking-wide">
-              Historical Security Scans & Threat Audits
-            </h2>
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-8 h-8 rounded-xl bg-[#1d3557] border border-[#457b9d]/40 flex items-center justify-center text-[#a9d8de]">
+              <History className="w-4 h-4" />
+            </div>
+            <h1 className="text-xl font-bold text-[#f3fbf0]">
+              Inspection History & Saved Reports
+            </h1>
           </div>
-          <p className="text-xs text-slate-400">
-            Review previous scans, download technical audit logs, and inspect changes in website risk scores.
+          <p className="text-xs sm:text-sm text-[#a9d8de]/85 max-w-2xl leading-relaxed">
+            Browse through previous URL scans, download offline audit summaries, and review identified security vulnerabilities.
           </p>
         </div>
       </div>
@@ -65,76 +75,83 @@ export const ScanHistory = ({ onOpenScan }) => {
       {/* Search and Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-[#457b9d] absolute left-3.5 top-3.5" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search scans by URL or domain..."
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#080d18] border border-slate-700 text-xs font-mono text-white focus:outline-none focus:border-cyan-400"
+            placeholder="Search saved scans by web address or domain..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0b1523] border border-[#274366] text-xs sm:text-sm text-[#f3fbf0] placeholder-[#a9d8de]/40 focus:outline-none focus:border-[#457b9d] transition-colors"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto text-xs pb-1 sm:pb-0">
           {riskFilters.map(rf => (
             <button
-              key={rf}
-              onClick={() => setFilterRisk(rf)}
-              className={`px-3 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
-                filterRisk === rf
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-white bg-[#0c1424] border border-slate-800'
+              key={rf.value}
+              onClick={() => setFilterRisk(rf.value)}
+              className={`px-3 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
+                filterRisk === rf.value
+                  ? 'bg-[#1d3557] text-[#f3fbf0] border border-[#457b9d]'
+                  : 'text-[#a9d8de]/70 hover:text-[#f3fbf0] bg-[#122035] border border-[#274366]'
               }`}
             >
-              {rf}
+              {rf.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* History Table */}
-      <div className="rounded-xl bg-[#0c1424] border border-slate-800 overflow-hidden">
+      {/* History Table Card */}
+      <div className="rounded-2xl bg-[#122035] border border-[#274366] overflow-hidden shadow-lg">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#080d18] text-slate-400 border-b border-slate-800">
+            <thead className="bg-[#0b1523] text-[#a9d8de] border-b border-[#274366]">
               <tr>
-                <th className="py-3 px-4 font-semibold">Target Domain / URL</th>
-                <th className="py-3 px-4 font-semibold">Classification</th>
-                <th className="py-3 px-4 font-semibold">Risk Score</th>
-                <th className="py-3 px-4 font-semibold">Timestamp</th>
-                <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                <th className="py-3.5 px-4 font-semibold">Web Address / Target</th>
+                <th className="py-3.5 px-4 font-semibold">Classification</th>
+                <th className="py-3.5 px-4 font-semibold">Safety Score</th>
+                <th className="py-3.5 px-4 font-semibold">Date & Time</th>
+                <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono">
+            <tbody className="divide-y divide-[#274366]/60">
               {filteredScans.length > 0 ? (
                 filteredScans.map((scan) => (
-                  <tr key={scan.id} className="hover:bg-slate-800/20 transition-colors">
-                    <td className="py-3 px-4 text-white font-bold truncate max-w-sm">
-                      {scan.url}
+                  <tr key={scan.id} className="hover:bg-[#182b45]/50 transition-colors">
+                    <td className="py-3.5 px-4 text-[#f3fbf0] font-medium truncate max-w-sm">
+                      <span className="font-mono text-xs">{scan.url}</span>
                     </td>
-                    <td className="py-3 px-4 font-sans">
+                    <td className="py-3.5 px-4">
                       <ThreatBadge category={scan.threat_classification} size="sm" />
                     </td>
-                    <td className="py-3 px-4">
-                      <strong className="text-sm font-mono text-white">{scan.risk_score}</strong>
-                      <span className="text-slate-500 text-[10px]">/100</span>
-                      <span className="text-slate-400 text-[11px] block font-sans">{scan.risk_category}</span>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-baseline gap-1">
+                        <strong className="text-sm font-bold font-mono text-[#f3fbf0]">{scan.risk_score}</strong>
+                        <span className="text-[10px] text-[#457b9d]">/100</span>
+                      </div>
+                      <span className="text-[11px] text-[#a9d8de]/70 block">{scan.risk_category}</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400 text-[11px] font-sans">
-                      {new Date(scan.scan_timestamp).toLocaleString()}
+                    <td className="py-3.5 px-4 text-[#a9d8de]/80 text-[11px]">
+                      {new Date(scan.scan_timestamp).toLocaleString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleDownload(scan)}
-                          title="Download Report"
-                          className="p-1.5 rounded bg-[#080d18] border border-slate-800 text-slate-300 hover:text-cyan-300 transition-colors"
+                          title="Download summary report"
+                          className="p-1.5 rounded-lg bg-[#0b1523] border border-[#274366] text-[#a9d8de] hover:text-[#f3fbf0] hover:border-[#457b9d] transition-colors"
                         >
                           <Download className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => onOpenScan && onOpenScan(scan)}
-                          className="px-2.5 py-1 rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] font-sans font-semibold transition-colors"
+                          className="px-3 py-1.5 rounded-lg bg-[#182b45] hover:bg-[#457b9d] hover:text-[#0b1523] text-[#f3fbf0] border border-[#274366] text-xs font-semibold transition-colors"
                         >
                           View Details
                         </button>
@@ -144,8 +161,16 @@ export const ScanHistory = ({ onOpenScan }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500 font-sans">
-                    {loading ? 'Loading scan history...' : 'No historical scans found matching query.'}
+                  <td colSpan={5} className="py-14 text-center text-[#a9d8de]/70">
+                    <div className="flex flex-col items-center gap-2">
+                      <History className="w-8 h-8 text-[#457b9d]" />
+                      <span className="font-semibold text-[#f3fbf0]">
+                        {loading ? 'Retrieving scan records...' : 'No historical scans match this filter.'}
+                      </span>
+                      <span className="text-xs text-[#a9d8de]/60">
+                        Scan any link from the URL Scanner to see its history here.
+                      </span>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -156,4 +181,3 @@ export const ScanHistory = ({ onOpenScan }) => {
     </div>
   );
 };
-

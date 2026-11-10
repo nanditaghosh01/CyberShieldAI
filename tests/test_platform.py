@@ -9,43 +9,40 @@ from app.ml.predict import predict_url
 from app.utils.validators import normalize_url, validate_public_target
 from app.utils.security import hash_password, verify_password, create_access_token, decode_access_token
 from app.services.risk_scoring import calculate_unified_risk_score
-from app.database import db_manager
 
 class TestCyberShieldAI(unittest.TestCase):
 
     def test_feature_extraction(self):
-        """Verifies that all 24 engineered features extract correctly."""
+        """Verifies that all 16 engineered features extract correctly."""
         url = "http://paypa1-security-verification.com/webscr?cmd=_login"
         feat = extract_url_features(url)
         for col in FEATURE_COLUMNS:
             self.assertIn(col, feat, f"Missing feature column: {col}")
-        self.assertGreater(feat["typosquat_similarity"], 0.7)
-        self.assertGreater(feat["suspicious_keyword_count"], 0)
-        self.assertEqual(feat["is_https"], 0)
+        self.assertGreater(feat["_typosquat_similarity"], 0.7)
+        self.assertEqual(feat["https_flag"], 0)
+        self.assertEqual(feat["has_hyphen_in_domain"], 1)
 
-    def test_ml_predictions(self):
-        """Tests that the trained ML classifier predicts appropriate categories."""
+    def test_ml_predictions_trained_model(self):
+        """Tests that the classifier trained on url_features_extracted1.csv predicts appropriately."""
         res_legit = predict_url("https://www.google.com/search?q=nist+cybersecurity")
-        self.assertIn(res_legit["prediction"], ["Legitimate", "Suspicious"])
-        self.assertGreaterEqual(res_legit["confidence"], 0.5)
-
-        res_phish = predict_url("http://paypa1-security-verification.com/webscr")
-        self.assertIn(res_phish["prediction"], ["Phishing", "Suspicious", "Malicious"])
+        self.assertEqual(res_legit["prediction"], "Legitimate")
+        self.assertGreaterEqual(res_legit["confidence"], 0.7)
 
         res_malware = predict_url("http://192.168.1.100/payload.exe")
-        self.assertEqual(res_malware["features"]["has_ip"], 1)
-        self.assertEqual(res_malware["features"]["has_sensitive_extension"], 1)
+        self.assertEqual(res_malware["features"]["has_ip_address"], 1)
+        self.assertEqual(res_malware["features"]["suspicious_file_extension"], 1)
+        self.assertEqual(res_malware["prediction"], "Malicious")
+
+        res_phish = predict_url("http://paypa1-security-verification.com/webscr?cmd=_login")
+        self.assertIn(res_phish["prediction"], ["Phishing", "Suspicious", "Malicious"])
 
     def test_ssrf_validator(self):
         """Tests that SSRF protections block private/link-local addresses."""
         from fastapi import HTTPException
-        # Private range 192.168.1.1
         with self.assertRaises(HTTPException):
             validate_public_target("192.168.1.1")
-        # Loopback 127.0.0.1
         with self.assertRaises(HTTPException):
             validate_public_target("127.0.0.1")
-        # Localhost
         with self.assertRaises(HTTPException):
             validate_public_target("localhost")
 
@@ -77,4 +74,3 @@ class TestCyberShieldAI(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

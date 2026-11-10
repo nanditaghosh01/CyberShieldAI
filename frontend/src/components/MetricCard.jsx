@@ -1,52 +1,52 @@
 import React from 'react';
 
-export const MetricCard = ({ title, value, icon: Icon, changeText, color = 'cyan', subtitle }) => {
+export const MetricCard = ({ title, value, icon: Icon, changeText, color = 'ice', subtitle }) => {
   const colorMap = {
-    cyan: 'border-cyan-500/20 text-cyan-400 bg-cyan-950/20 hover:border-cyan-500/40',
-    blue: 'border-blue-500/20 text-blue-400 bg-blue-950/20 hover:border-blue-500/40',
-    emerald: 'border-emerald-500/20 text-emerald-400 bg-emerald-950/20 hover:border-emerald-500/40',
-    amber: 'border-amber-500/20 text-amber-400 bg-amber-950/20 hover:border-amber-500/40',
-    rose: 'border-rose-500/20 text-rose-400 bg-rose-950/20 hover:border-rose-500/40',
+    ice: 'border-[#274366] text-[#a9d8de] bg-[#122035] hover:border-[#457b9d]',
+    steel: 'border-[#274366] text-[#d8f0f3] bg-[#14253d] hover:border-[#457b9d]',
+    honeydew: 'border-[#274366] text-[#f3fbf0] bg-[#122035] hover:border-[#457b9d]',
+    // Red shades for harmful/alert metrics
+    red: 'border-[#a81b26]/70 text-[#fca5ac] bg-[#22070a] hover:border-[#e83845]',
+    deepRed: 'border-[#e83845] text-[#ffd0d4] bg-[#2b080d] hover:border-[#f86b76]',
   };
 
   const iconBgMap = {
-    cyan: 'bg-cyan-500/10 text-cyan-400 ring-1 ring-cyan-500/20',
-    blue: 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20',
-    emerald: 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20',
-    amber: 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20',
-    rose: 'bg-rose-500/10 text-rose-400 ring-1 ring-rose-500/20',
+    ice: 'bg-[#182b45] text-[#a9d8de] border border-[#274366]',
+    steel: 'bg-[#182b45] text-[#457b9d] border border-[#274366]',
+    honeydew: 'bg-[#182b45] text-[#f3fbf0] border border-[#274366]',
+    red: 'bg-[#38080c] text-[#e83845] border border-[#a81b26]',
+    deepRed: 'bg-[#4c0c11] text-[#f86b76] border border-[#e83845]',
   };
 
   return (
-    <div className={`relative p-5 rounded-xl bg-[#0c1424] border transition-all duration-200 group ${colorMap[color] || colorMap.cyan}`}>
+    <div className={`p-4 sm:p-5 rounded-2xl border transition-all duration-150 shadow-sm hover:shadow group ${colorMap[color] || colorMap.ice}`}>
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
+        <span className="text-xs font-medium text-[#a9d8de]/90">
           {title}
         </span>
         {Icon && (
-          <div className={`p-2 rounded-lg ${iconBgMap[color] || iconBgMap.cyan}`}>
-            <Icon className="w-5 h-5" />
+          <div className={`p-2 rounded-xl ${iconBgMap[color] || iconBgMap.ice}`}>
+            <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         )}
       </div>
 
-      <div className="mt-3 flex items-baseline gap-2">
-        <span className="text-3xl font-bold font-mono text-white tracking-tight">
+      <div className="mt-2.5 flex items-baseline gap-2">
+        <span className="text-2xl sm:text-3xl font-bold text-[#f3fbf0] tracking-tight">
           {value}
         </span>
         {changeText && (
-          <span className="text-xs font-medium text-emerald-400 flex items-center">
+          <span className="text-xs font-medium text-[#a9d8de]">
             {changeText}
           </span>
         )}
       </div>
 
       {subtitle && (
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-[11px] text-[#a9d8de]/75 leading-tight">
           {subtitle}
         </p>
       )}
     </div>
   );
 };
-

@@ -6,7 +6,7 @@ def generate_text_security_report(scan_data: dict) -> str:
     """
     url = scan_data.get("url", "")
     domain = scan_data.get("domain", "")
-    timestamp = scan_data.get("scan_timestamp", datetime.datetime.utcnow().isoformat())
+    timestamp = scan_data.get("scan_timestamp", datetime.datetime.now(datetime.timezone.utc).isoformat())
     risk_score = scan_data.get("risk_score", 0.0)
     risk_category = scan_data.get("risk_category", "Unknown")
     threat_class = scan_data.get("threat_classification", "Unknown")

@@ -1,44 +1,39 @@
 import React from 'react';
-import { Shield, Activity, PlusCircle } from 'lucide-react';
+import { Shield, Plus, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const Navbar = ({ title = "Dashboard", onQuickScan }) => {
   const { user } = useAuth();
 
   return (
-    <header className="h-16 bg-[#0a101d]/90 backdrop-blur-md border-b border-slate-800/80 px-6 flex items-center justify-between sticky top-0 z-20">
+    <header className="h-16 bg-[#101e33]/95 backdrop-blur-md border-b border-[#274366] px-6 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-3">
-        <h1 className="text-lg font-bold text-white tracking-wide">
+        <h1 className="text-base sm:text-lg font-semibold text-[#f3fbf0] tracking-tight">
           {title}
         </h1>
-        <div className="hidden sm:flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-xs text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30">
-            SYSTEM ONLINE
-          </span>
+        <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#182b45] border border-[#274366] text-xs text-[#a9d8de]">
+          <span className="w-2 h-2 rounded-full bg-[#a9d8de]" />
+          <span className="font-medium text-[11px]">Protection Active</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Quick Scan CTA */}
+      <div className="flex items-center gap-3">
         {onQuickScan && (
           <button
             onClick={onQuickScan}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs shadow-[0_0_15px_rgba(0,240,255,0.25)] transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#457b9d] hover:bg-[#a9d8de] text-[#0b1523] font-semibold text-xs shadow-sm hover:shadow transition-all"
           >
-            <PlusCircle className="w-4 h-4" />
-            <span>Scan URL</span>
+            <Plus className="w-3.5 h-3.5" />
+            <span>Scan a Website</span>
           </button>
         )}
 
-        <div className="hidden md:flex items-center gap-3 pl-4 border-l border-slate-800">
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
-            <Activity className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Passive Heuristic Guard</span>
+        {user && (
+          <div className="hidden md:flex items-center gap-2 pl-3 border-l border-[#274366] text-xs text-[#a9d8de]/80">
+            <span>Welcome, <strong className="text-[#f3fbf0] font-medium">{user.username}</strong></span>
           </div>
-        </div>
+        )}
       </div>
     </header>
   );
 };
-

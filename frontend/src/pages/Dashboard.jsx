@@ -55,125 +55,124 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
   }, []);
 
   const threatData = stats?.threat_distribution || [
-    { name: 'Legitimate', value: 45, color: '#10b981' },
-    { name: 'Suspicious', value: 18, color: '#f59e0b' },
-    { name: 'Phishing', value: 24, color: '#f97316' },
-    { name: 'Malicious', value: 12, color: '#ef4444' }
+    { name: 'Legitimate', value: 45, color: '#a9d8de' }, // Ice Blue
+    { name: 'Suspicious', value: 18, color: '#457b9d' }, // Steel Cerulean
+    { name: 'Phishing', value: 24, color: '#e83845' },   // Harmful Coral Red
+    { name: 'Malicious', value: 12, color: '#a81b26' }   // Harmful Deep Crimson Red
   ];
 
   const riskBarData = [
-    { range: '0-20 (Low)', count: stats?.secure_analyzed || 45, fill: '#10b981' },
-    { range: '21-40 (Mod)', count: 14, fill: '#0ea5e9' },
-    { range: '41-60 (Elev)', count: stats?.suspicious_detected || 18, fill: '#f59e0b' },
-    { range: '61-80 (High)', count: stats?.phishing_detected || 24, fill: '#f97316' },
-    { range: '81-100 (Crit)', count: stats?.malicious_detected || 12, fill: '#ef4444' }
+    { range: '0-20 (Low)', count: stats?.secure_analyzed || 45, fill: '#a9d8de' },
+    { range: '21-40 (Mod)', count: 14, fill: '#457b9d' },
+    { range: '41-60 (Elev)', count: stats?.suspicious_detected || 18, fill: '#f86b76' },
+    { range: '61-80 (High)', count: stats?.phishing_detected || 24, fill: '#e83845' },
+    { range: '81-100 (Crit)', count: stats?.malicious_detected || 12, fill: '#a81b26' }
   ];
 
   return (
     <div className="space-y-6">
       {/* Top Welcome / Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0c162b] via-[#0d1c3a] to-[#0a1224] border border-cyan-500/20 p-6 shadow-[0_0_30px_rgba(0,240,255,0.08)]">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-transparent pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <ShieldCheck className="w-5 h-5 text-cyan-400" />
-              <span className="text-xs font-semibold tracking-wider text-cyan-300 uppercase font-mono">
-                Unified Web Threat Protection
+      <div className="rounded-2xl bg-gradient-to-r from-[#122035] via-[#182b45] to-[#122035] border border-[#274366] p-6 sm:p-7 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#a9d8de]" />
+              <span className="text-xs font-medium text-[#a9d8de]">
+                Website Trust & Safety Center
               </span>
             </div>
-            <h2 className="text-2xl font-extrabold text-white tracking-tight">
-              CyberShield AI Security Intelligence
+            <h2 className="text-xl sm:text-2xl font-bold text-[#f3fbf0] tracking-tight">
+              Know if a website is safe before you click
             </h2>
-            <p className="text-sm text-slate-300 mt-1 max-w-2xl">
-              Real-time multi-dimensional detection combining Machine Learning URL heuristics, passive web configuration auditing, SSL/TLS cryptographic verification, and collaborative threat intelligence.
+            <p className="text-xs sm:text-sm text-[#a9d8de]/80 max-w-2xl leading-relaxed">
+              Check links for phishing scams, fake banking logins, and malicious downloads. We verify the actual SSL certificate, domain history, and public community reports in real time.
             </p>
           </div>
           <button
             onClick={() => onSelectTab('scanner')}
-            className="self-start md:self-auto flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all transform active:scale-95"
+            className="self-start md:self-auto flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#457b9d] hover:bg-[#a9d8de] text-[#0b1523] font-semibold text-sm shadow-sm hover:shadow transition-all transform active:scale-95 shrink-0"
           >
-            <span>Launch Security Scanner</span>
+            <span>Scan a Website</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Metric Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         <MetricCard
-          title="Total Scanned"
+          title="Links Inspected"
           value={stats?.total_scanned ?? 0}
           icon={Globe}
-          color="cyan"
-          subtitle="All inspected domains"
+          color="ice"
+          subtitle="Websites scanned to date"
         />
         <MetricCard
-          title="Phishing Detected"
+          title="Phishing Traps"
           value={stats?.phishing_detected ?? 0}
           icon={AlertTriangle}
-          color="amber"
-          subtitle="Deceptive credential traps"
+          color="red"
+          subtitle="Fake logins & cloned portals"
         />
         <MetricCard
-          title="Malicious Identified"
+          title="Malicious Sites"
           value={stats?.malicious_detected ?? 0}
           icon={Skull}
-          color="rose"
-          subtitle="Confirmed threat & malware"
+          color="deepRed"
+          subtitle="Confirmed malware & exploits"
         />
         <MetricCard
-          title="Secure Analysed"
+          title="Verified Safe"
           value={stats?.secure_analyzed ?? 0}
           icon={CheckCircle}
-          color="emerald"
-          subtitle="Structurally verified sites"
+          color="honeydew"
+          subtitle="Clean and verified safe"
         />
         <MetricCard
-          title="Requires Attention"
+          title="Needs Attention"
           value={stats?.requiring_attention ?? 0}
           icon={Shield}
-          color="blue"
-          subtitle="Weak crypto or missing headers"
+          color="steel"
+          subtitle="Weak security or missing SSL"
         />
       </div>
 
       {/* Visual Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Threat Distribution Donut */}
-        <div className="lg:col-span-5 rounded-xl bg-[#0c1424] border border-slate-800 p-5">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-5 rounded-2xl bg-[#122035] border border-[#274366] p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-sm font-bold text-white tracking-wide">Threat Classification Distribution</h3>
-              <p className="text-xs text-slate-400">Class breakdown across all analyzed endpoints</p>
+              <h3 className="text-sm font-semibold text-[#f3fbf0]">Website Safety Breakdown</h3>
+              <p className="text-xs text-[#a9d8de]/75">Categorization across all analyzed links</p>
             </div>
-            <Activity className="w-4 h-4 text-cyan-400" />
+            <Activity className="w-4 h-4 text-[#a9d8de]" />
           </div>
-          <div className="h-64">
+          <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={threatData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={65}
-                  outerRadius={85}
-                  paddingAngle={5}
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={4}
                   dataKey="value"
                 >
                   {threatData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} stroke="#0c1424" strokeWidth={2} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="#122035" strokeWidth={2} />
                   ))}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#070b14', borderColor: '#1e2c47', borderRadius: '8px', fontSize: '12px' }} 
-                  itemStyle={{ color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#0b1523', borderColor: '#274366', borderRadius: '8px', fontSize: '12px', color: '#f3fbf0' }} 
+                  itemStyle={{ color: '#f3fbf0' }}
                 />
                 <Legend 
                   verticalAlign="bottom" 
-                  height={36} 
+                  height={32} 
                   iconType="circle" 
-                  formatter={(val) => <span className="text-xs text-slate-300">{val}</span>}
+                  formatter={(val) => <span className="text-xs text-[#a9d8de]">{val}</span>}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -181,24 +180,24 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
         </div>
 
         {/* Risk Level Distribution Bar Chart */}
-        <div className="lg:col-span-7 rounded-xl bg-[#0c1424] border border-slate-800 p-5">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-7 rounded-2xl bg-[#122035] border border-[#274366] p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-sm font-bold text-white tracking-wide">Unified Risk Score Distribution</h3>
-              <p className="text-xs text-slate-400">0-100 severity index across scanned assets</p>
+              <h3 className="text-sm font-semibold text-[#f3fbf0]">Overall Risk Score Distribution</h3>
+              <p className="text-xs text-[#a9d8de]/75">From 0 (clean & verified) to 100 (critical threat)</p>
             </div>
-            <span className="text-xs font-mono text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/20">
-              Composite Model
+            <span className="text-xs text-[#a9d8de] bg-[#182b45] px-2.5 py-0.5 rounded-full border border-[#274366]">
+              Risk Range
             </span>
           </div>
-          <div className="h-64">
+          <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={riskBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <XAxis dataKey="range" stroke="#64748b" fontSize={11} tickLine={false} />
-                <YAxis stroke="#64748b" fontSize={11} tickLine={false} />
+                <XAxis dataKey="range" stroke="#457b9d" fontSize={11} tickLine={false} />
+                <YAxis stroke="#457b9d" fontSize={11} tickLine={false} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#070b14', borderColor: '#1e2c47', borderRadius: '8px', fontSize: '12px' }}
-                  itemStyle={{ color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#0b1523', borderColor: '#274366', borderRadius: '8px', fontSize: '12px', color: '#f3fbf0' }}
+                  itemStyle={{ color: '#f3fbf0' }}
                 />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -208,46 +207,43 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
       </div>
 
       {/* Motivating Security Incident Banner: eMudhra CA Case Study */}
-      <div className="rounded-xl bg-[#0f192e] border border-blue-500/30 p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-2xl bg-[#182b45] border border-[#274366] p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 mt-0.5">
+          <div className="p-2 rounded-xl bg-[#122035] border border-[#274366] text-[#a9d8de] mt-0.5">
             <Lock className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">
-                Case Study Highlight: eMudhra TLS Certificate Incident
-              </span>
-              <span className="text-[10px] bg-blue-950 text-blue-300 px-1.5 py-0.5 rounded border border-blue-500/30">
-                CA Trust Analysis
+              <span className="text-xs font-semibold text-[#a9d8de]">
+                Why HTTPS alone isn't proof of safety: The eMudhra incident
               </span>
             </div>
-            <p className="text-xs text-slate-300 mt-1 max-w-3xl">
-              HTTPS alone is not proof of legitimacy. The eMudhra incident demonstrates that improper Certificate Authority practices or unauthorized intermediate certificates can issue valid-looking padlocks for unauthorized domains. CyberShield AI rigorously verifies issuing CA roots, certificate chains, and Certificate Transparency (CT) logs.
+            <p className="text-xs text-[#f3fbf0]/80 mt-1 max-w-3xl leading-relaxed">
+              Many phishing sites now have valid SSL certificates and display a green padlock. Incidents like eMudhra showed that unauthorized intermediate certificates can make fraudulent portals look authentic. CyberShield verifies issuing authorities, key lengths, and Certificate Transparency (CT) records rather than assuming a lock icon means trust.
             </p>
           </div>
         </div>
         <button
           onClick={() => onSelectTab('ssl')}
-          className="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-500/30 transition-all flex items-center gap-1.5"
+          className="whitespace-nowrap px-4 py-2 rounded-xl bg-[#122035] hover:bg-[#1d3557] text-[#f3fbf0] text-xs font-medium border border-[#274366] hover:border-[#457b9d] transition-all flex items-center gap-1.5 shrink-0"
         >
-          <span>Inspect SSL/TLS</span>
-          <ExternalLink className="w-3.5 h-3.5" />
+          <span>Learn More</span>
+          <ExternalLink className="w-3.5 h-3.5 text-[#a9d8de]" />
         </button>
       </div>
 
       {/* Recent Scans and Community Feeds Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Recent Scans Table */}
-        <div className="lg:col-span-7 rounded-xl bg-[#0c1424] border border-slate-800 p-5">
+        <div className="lg:col-span-7 rounded-xl bg-[#122035] border border-[#274366] p-5 shadow-[0_0_20px_rgba(0,0,0,0.2)]">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white tracking-wide">Recent Security Scans</h3>
-              <p className="text-xs text-slate-400">Latest inspected targets and calculated risk levels</p>
+              <h3 className="text-sm font-bold text-[#f3fbf0] tracking-wide">Recent Security Scans</h3>
+              <p className="text-xs text-[#a9d8de]/70">Latest inspected targets and calculated risk levels</p>
             </div>
             <button
               onClick={() => onSelectTab('history')}
-              className="text-xs text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1"
+              className="text-xs text-[#a9d8de] hover:text-[#f3fbf0] font-medium flex items-center gap-1"
             >
               <span>View All</span>
               <ArrowRight className="w-3 h-3" />
@@ -256,7 +252,7 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="text-slate-400 border-b border-slate-800 bg-[#080d18]">
+              <thead className="text-[#a9d8de] border-b border-[#274366] bg-[#0b1523]">
                 <tr>
                   <th className="py-2.5 px-3 font-semibold">Target Domain / URL</th>
                   <th className="py-2.5 px-3 font-semibold">Classification</th>
@@ -264,26 +260,26 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
                   <th className="py-2.5 px-3 font-semibold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-[#274366]/60">
                 {recentScans.length > 0 ? (
                   recentScans.map((scan) => (
-                    <tr key={scan.id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="py-2.5 px-3 font-mono text-slate-200 truncate max-w-xs">
+                    <tr key={scan.id} className="hover:bg-[#182b45]/50 transition-colors">
+                      <td className="py-2.5 px-3 font-mono text-[#f3fbf0] truncate max-w-xs">
                         {scan.domain || scan.url}
                       </td>
                       <td className="py-2.5 px-3">
                         <ThreatBadge category={scan.threat_classification} size="sm" />
                       </td>
                       <td className="py-2.5 px-3 font-mono font-bold">
-                        <span style={{ color: scan.details?.risk_scoring?.color_code || '#fff' }}>
+                        <span style={{ color: scan.details?.risk_scoring?.color_code || '#a9d8de' }}>
                           {scan.risk_score}
                         </span>
-                        <span className="text-slate-500 text-[10px]">/100</span>
+                        <span className="text-[#457b9d] text-[10px]">/100</span>
                       </td>
                       <td className="py-2.5 px-3 text-right">
                         <button
                           onClick={() => onOpenScan && onOpenScan(scan)}
-                          className="px-2 py-1 rounded bg-slate-800 hover:bg-cyan-950 text-cyan-300 border border-slate-700 hover:border-cyan-500/40 text-[11px] font-medium transition-colors"
+                          className="px-2 py-1 rounded bg-[#182b45] hover:bg-[#457b9d] text-[#f3fbf0] border border-[#274366] hover:border-[#a9d8de] text-[11px] font-medium transition-colors"
                         >
                           Details
                         </button>
@@ -292,7 +288,7 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="py-8 text-center text-slate-500">
+                    <td colSpan={4} className="py-8 text-center text-[#a9d8de]/60">
                       No security scans recorded yet. Enter a website URL to begin analysis.
                     </td>
                   </tr>
@@ -303,15 +299,15 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
         </div>
 
         {/* Recent Community Reports Feed */}
-        <div className="lg:col-span-5 rounded-xl bg-[#0c1424] border border-slate-800 p-5">
+        <div className="lg:col-span-5 rounded-xl bg-[#122035] border border-[#274366] p-5 shadow-[0_0_20px_rgba(0,0,0,0.2)]">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-bold text-white tracking-wide">Community Threat Intelligence</h3>
-              <p className="text-xs text-slate-400">Crowdsourced submissions & status verification</p>
+              <h3 className="text-sm font-bold text-[#f3fbf0] tracking-wide">Community Threat Intelligence</h3>
+              <p className="text-xs text-[#a9d8de]/70">Crowdsourced submissions & status verification</p>
             </div>
             <button
               onClick={() => onSelectTab('community')}
-              className="text-xs text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1"
+              className="text-xs text-[#a9d8de] hover:text-[#f3fbf0] font-medium flex items-center gap-1"
             >
               <span>Submit Report</span>
               <ArrowRight className="w-3 h-3" />
@@ -321,24 +317,24 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
           <div className="space-y-3">
             {recentReports.length > 0 ? (
               recentReports.map((report) => (
-                <div key={report.id} className="p-3 rounded-lg bg-[#080d18] border border-slate-800 hover:border-slate-700 transition-colors">
+                <div key={report.id} className="p-3 rounded-lg bg-[#0b1523] border border-[#274366] hover:border-[#457b9d] transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-xs font-mono font-semibold text-slate-200 truncate">
+                    <span className="text-xs font-mono font-semibold text-[#f3fbf0] truncate">
                       {report.url}
                     </span>
                     <ThreatBadge category={report.status} size="sm" />
                   </div>
-                  <p className="text-[11px] text-slate-400 line-clamp-2">
+                  <p className="text-[11px] text-[#a9d8de]/80 line-clamp-2">
                     {report.description}
                   </p>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/60 text-[10px] text-slate-500 font-mono">
-                    <span>Category: <strong className="text-slate-300">{report.threat_category}</strong></span>
-                    <span>Votes: <strong className="text-emerald-400">+{report.upvotes}</strong> / <strong className="text-rose-400">-{report.downvotes}</strong></span>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#274366]/60 text-[10px] text-[#a9d8de]/70 font-mono">
+                    <span>Category: <strong className="text-[#f3fbf0]">{report.threat_category}</strong></span>
+                    <span>Votes: <strong className="text-[#a9d8de]">+{report.upvotes}</strong> / <strong className="text-[#e83845]">-{report.downvotes}</strong></span>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="py-8 text-center text-xs text-slate-500">No community threat reports submitted yet.</p>
+              <p className="py-8 text-center text-xs text-[#a9d8de]/60">No community threat reports submitted yet.</p>
             )}
           </div>
         </div>

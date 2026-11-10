@@ -1,0 +1,13 @@
+{
+  "name": "cybershield-ai-root",
+  "version": "1.0.0",
+  "description": "CyberShield AI - Unified Threat Intelligence & AI Phishing Detection Platform",
+  "scripts": {
+    "start": "powershell -ExecutionPolicy Bypass -File ./run.ps1",
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build"
+  },
+  "author": "CyberShield AI Team",
+  "license": "MIT"
+}
+

@@ -12,7 +12,10 @@ class DatabaseManager:
         self.client = None
         self.db = None
         self.is_mongodb = False
-        self.sqlite_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "cybershield.db")
+        if os.getenv("VERCEL"):
+            self.sqlite_path = "/tmp/cybershield.db"
+        else:
+            self.sqlite_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "cybershield.db")
         self._init_connection()
 
     def _init_connection(self):

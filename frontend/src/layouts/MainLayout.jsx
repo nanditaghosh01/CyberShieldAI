@@ -18,7 +18,7 @@ export const MainLayout = ({ activeTab, setActiveTab, children, onQuickScan }) =
   };
 
   return (
-    <div className="flex min-h-screen bg-[#070b14] text-slate-100">
+    <div className="flex min-h-screen bg-[#0b1523] text-[#f3fbf0]">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar 
@@ -32,4 +32,3 @@ export const MainLayout = ({ activeTab, setActiveTab, children, onQuickScan }) =
     </div>
   );
 };
-

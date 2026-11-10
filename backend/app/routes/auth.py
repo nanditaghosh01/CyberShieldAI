@@ -22,7 +22,7 @@ def register(user_in: UserRegister):
     role = user_in.role if user_in.role in allowed_roles else "Regular User"
 
     user_id = str(uuid.uuid4())
-    now_iso = datetime.datetime.utcnow().isoformat()
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
     hashed_pwd = hash_password(user_in.password)
 
     user_data = {

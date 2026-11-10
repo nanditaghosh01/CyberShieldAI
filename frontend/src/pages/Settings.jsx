@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Database, ShieldAlert, Key, UserCheck, ShieldCheck } from 'lucide-react';
+import { Settings as SettingsIcon, Database, ShieldAlert, Key, UserCheck, ShieldCheck, CheckCircle2, Lock, Cpu, Server } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
 export const Settings = () => {
   const { user, isAnalyst, isAdmin } = useAuth();
   const [adminStatus, setAdminStatus] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isAnalyst) {
@@ -15,108 +14,113 @@ export const Settings = () => {
   }, [isAnalyst]);
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl bg-[#0c1424] border border-cyan-500/30 p-6">
-        <div className="flex items-center gap-2 mb-1">
-          <SettingsIcon className="w-5 h-5 text-cyan-400" />
-          <h2 className="text-lg font-bold text-white tracking-wide">
-            Platform Configuration & System Architecture
-          </h2>
+    <div className="space-y-6 max-w-6xl mx-auto">
+      {/* Header Card */}
+      <div className="rounded-2xl bg-[#122035] border border-[#274366] p-6 sm:p-7 shadow-lg">
+        <div className="flex items-center gap-2 mb-1.5">
+          <div className="w-8 h-8 rounded-xl bg-[#1d3557] border border-[#457b9d]/40 flex items-center justify-center text-[#a9d8de]">
+            <SettingsIcon className="w-4 h-4" />
+          </div>
+          <h1 className="text-xl font-bold text-[#f3fbf0]">
+            System Architecture & Protection Settings
+          </h1>
         </div>
-        <p className="text-xs text-slate-400">
-          Manage API keys, database persistence engines, SSRF protections, and role-based permissions.
+        <p className="text-xs sm:text-sm text-[#a9d8de]/85 max-w-2xl leading-relaxed">
+          Verify connected threat feed services, inspect database storage failover, and review scanner safety guardrails.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Persistence & Database Engine Status */}
-        <div className="p-5 rounded-xl bg-[#0c1424] border border-slate-800 space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-            <Database className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold text-white">Database & Persistence Engine</h3>
+        <div className="p-6 rounded-2xl bg-[#122035] border border-[#274366] space-y-4 shadow-lg">
+          <div className="flex items-center gap-2.5 border-b border-[#274366] pb-3">
+            <Database className="w-4 h-4 text-[#a9d8de]" />
+            <h3 className="text-sm font-bold text-[#f3fbf0]">Data Storage & Database Health</h3>
           </div>
-          <div className="space-y-2 text-xs">
+          <div className="space-y-2.5 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Primary Database Engine:</span>
-              <strong className="text-emerald-400 font-mono">
-                {adminStatus?.database?.engine || 'Active (Dual Mongo/SQLite Driver)'}
-              </strong>
+              <span className="text-[#a9d8de]/80">Primary Storage Engine:</span>
+              <span className="text-[#f3fbf0] font-semibold">
+                {adminStatus?.database?.engine || 'Active (Mongo with SQLite Fallback)'}
+              </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Database Name:</span>
-              <span className="text-white font-mono">{adminStatus?.database?.database_name || 'cybershield_ai'}</span>
+              <span className="text-[#a9d8de]/80">Database Collection:</span>
+              <span className="text-[#a9d8de] font-mono">{adminStatus?.database?.database_name || 'cybershield_ai'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Zero-Config Fallback:</span>
-              <span className="text-cyan-400 font-mono">ENABLED (Automatic)</span>
+              <span className="text-[#a9d8de]/80">Autonomous Fallback:</span>
+              <span className="text-[#a9d8de] font-semibold">Enabled (Seamless offline switch)</span>
             </div>
           </div>
-          <p className="text-[11px] text-slate-500">
-            CyberShield AI operates on MongoDB when the daemon is running, and automatically fails over to an embedded local storage layer when standalone testing is needed.
+          <p className="text-[11px] text-[#a9d8de]/70 bg-[#0b1523] p-3 rounded-xl border border-[#274366] leading-relaxed">
+            CyberShield AI connects to MongoDB when available. If MongoDB is unavailable during testing or deployment, it smoothly transitions to a zero-configuration local database without dropping any user scans.
           </p>
         </div>
 
         {/* Security & SSRF Protection Policy */}
-        <div className="p-5 rounded-xl bg-[#0c1424] border border-slate-800 space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold text-white">SSRF & Scanning Safeguards</h3>
+        <div className="p-6 rounded-2xl bg-[#122035] border border-[#274366] space-y-4 shadow-lg">
+          <div className="flex items-center gap-2.5 border-b border-[#274366] pb-3">
+            <ShieldCheck className="w-4 h-4 text-[#a9d8de]" />
+            <h3 className="text-sm font-bold text-[#f3fbf0]">Scanner Safety & SSRF Guardrails</h3>
           </div>
-          <div className="space-y-2 text-xs">
+          <div className="space-y-2.5 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Private IP Blocking (RFC 1918):</span>
-              <strong className="text-emerald-400 font-mono">ACTIVE (10/8, 172.16/12, 192.168/16)</strong>
+              <span className="text-[#a9d8de]/80">Private Network Protection:</span>
+              <span className="text-[#a9d8de] font-semibold">Active (Blocks 192.168.x, 10.x, 172.x)</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Loopback & Cloud Metadata:</span>
-              <strong className="text-emerald-400 font-mono">BLOCKED (127.0.0.1, 169.254.169.254)</strong>
+              <span className="text-[#a9d8de]/80">Cloud Metadata Protection:</span>
+              <span className="text-[#a9d8de] font-semibold">Active (Blocks 169.254.169.254 & localhost)</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Scan Socket Timeout:</span>
-              <span className="text-white font-mono">10.0 seconds</span>
+              <span className="text-[#a9d8de]/80">Request Timeout:</span>
+              <span className="text-[#f3fbf0] font-mono">10.0 seconds</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Max HTTP Redirect Hops:</span>
-              <span className="text-white font-mono">5 hops max</span>
+              <span className="text-[#a9d8de]/80">Redirect Hop Limit:</span>
+              <span className="text-[#f3fbf0] font-mono">5 hops maximum</span>
             </div>
           </div>
+          <p className="text-[11px] text-[#a9d8de]/70 bg-[#0b1523] p-3 rounded-xl border border-[#274366] leading-relaxed">
+            Prevents malicious users from submitting internal IP addresses or server metadata endpoints, ensuring security scans strictly inspect external, public websites.
+          </p>
         </div>
       </div>
 
       {/* External Intelligence API Key Configuration */}
-      <div className="rounded-xl bg-[#0c1424] border border-slate-800 p-5">
-        <h3 className="text-sm font-bold text-white mb-2">Threat Intelligence Service Integrations</h3>
-        <p className="text-xs text-slate-400 mb-4">
-          Keys configured via environment variables (.env). Active heuristic fallback algorithms protect users when external API limits are exceeded.
+      <div className="rounded-2xl bg-[#122035] border border-[#274366] p-6 shadow-lg">
+        <h3 className="text-base font-bold text-[#f3fbf0] mb-1">Threat Feed Integrations</h3>
+        <p className="text-xs text-[#a9d8de]/80 mb-4">
+          API keys are safely loaded from server environment variables (<code className="text-[#a9d8de]">.env</code>) and are never exposed in frontend browser code.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-mono">
-          <div className="p-3 rounded-lg bg-[#080d18] border border-slate-800">
-            <span className="text-white block font-sans font-semibold">Google Safe Browsing</span>
-            <span className="text-slate-500 text-[10px] block mt-0.5">API v4 REST</span>
-            <span className="text-cyan-400 mt-2 block">Environment Configured</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div className="p-4 rounded-xl bg-[#0b1523] border border-[#274366] space-y-1">
+            <strong className="text-[#f3fbf0] block font-semibold">Google Safe Browsing</strong>
+            <span className="text-[11px] text-[#457b9d] block">API v4 Threat List</span>
+            <span className="text-xs text-[#a9d8de] font-medium block pt-1">Environment Configured</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#080d18] border border-slate-800">
-            <span className="text-white block font-sans font-semibold">VirusTotal API</span>
-            <span className="text-slate-500 text-[10px] block mt-0.5">Multi-engine Antivirus</span>
-            <span className="text-cyan-400 mt-2 block">Environment Configured</span>
+          <div className="p-4 rounded-xl bg-[#0b1523] border border-[#274366] space-y-1">
+            <strong className="text-[#f3fbf0] block font-semibold">VirusTotal Intelligence</strong>
+            <span className="text-[11px] text-[#457b9d] block">Multi-Scanner Aggregation</span>
+            <span className="text-xs text-[#a9d8de] font-medium block pt-1">Environment Configured</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#080d18] border border-slate-800">
-            <span className="text-white block font-sans font-semibold">URLhaus (Abuse.ch)</span>
-            <span className="text-slate-500 text-[10px] block mt-0.5">Community Malware Feeds</span>
-            <span className="text-emerald-400 mt-2 block">Active Public API</span>
+          <div className="p-4 rounded-xl bg-[#0b1523] border border-[#274366] space-y-1">
+            <strong className="text-[#f3fbf0] block font-semibold">URLhaus (Abuse.ch)</strong>
+            <span className="text-[11px] text-[#457b9d] block">Community Malware Registry</span>
+            <span className="text-xs text-[#a9d8de] font-medium block pt-1">Active Public Feed</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#080d18] border border-slate-800">
-            <span className="text-white block font-sans font-semibold">CT Log Monitors</span>
-            <span className="text-slate-500 text-[10px] block mt-0.5">RFC 6962 / SCT Logs</span>
-            <span className="text-emerald-400 mt-2 block">Active X.509 Parser</span>
+          <div className="p-4 rounded-xl bg-[#0b1523] border border-[#274366] space-y-1">
+            <strong className="text-[#f3fbf0] block font-semibold">Certificate Transparency</strong>
+            <span className="text-[11px] text-[#457b9d] block">RFC 6962 CT Proof Verifier</span>
+            <span className="text-xs text-[#a9d8de] font-medium block pt-1">Active X.509 Inspector</span>
           </div>
         </div>
       </div>
     </div>
   );
 };
-

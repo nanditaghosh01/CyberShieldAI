@@ -1,23 +1,34 @@
 import re
 import math
-import unicodedata
 from urllib.parse import urlparse
 import ipaddress
 
-# Known URL Shorteners
-URL_SHORTENERS = {
-    "bit.ly", "tinyurl.com", "t.co", "is.gd", "buff.ly", "ow.ly", "goo.gl",
-    "rebrand.ly", "tiny.cc", "cutt.ly", "shorte.st", "bl.ink", "trib.al",
-    "lnkd.in", "qr.ae", "adf.ly", "rb.gy", "shorturl.at"
+FEATURE_COLUMNS = [
+    "url_length",
+    "has_ip_address",
+    "dot_count",
+    "https_flag",
+    "url_entropy",
+    "token_count",
+    "subdomain_count",
+    "query_param_count",
+    "tld_length",
+    "path_length",
+    "has_hyphen_in_domain",
+    "number_of_digits",
+    "tld_popularity",
+    "suspicious_file_extension",
+    "domain_name_length",
+    "percentage_numeric_chars"
+]
+
+POPULAR_TLDS = {"com", "org", "net", "edu", "gov", "io", "co", "uk", "in", "de", "ca", "au", "jp", "fr"}
+
+SUSPICIOUS_EXTENSIONS = {
+    ".exe", ".bin", ".scr", ".sh", ".au3", ".m", ".apk", ".zip", ".msi", ".dll",
+    ".bat", ".ps1", ".vbs", ".jar", ".iso", ".dmg", ".vmp.exe"
 }
 
-# Suspicious TLDs frequently abused in phishing campaigns
-SUSPICIOUS_TLDS = {
-    "xyz", "top", "work", "club", "buzz", "fit", "gq", "cf", "ml", "ga", "tk",
-    "icu", "loan", "click", "rest", "support", "country", "stream", "live", "link"
-}
-
-# Suspicious keywords in URL structure
 SUSPICIOUS_KEYWORDS = [
     "login", "verify", "secure", "security", "account", "update", "banking",
     "signin", "sign-in", "wallet", "confirm", "confirmation", "password",
@@ -26,7 +37,6 @@ SUSPICIOUS_KEYWORDS = [
     "credential", "identity", "appleid", "paypal", "netflix", "chase", "wellsfargo"
 ]
 
-# High-profile targets for typosquatting / impersonation checks
 TARGET_BRANDS = [
     "paypal", "google", "apple", "microsoft", "amazon", "netflix", "facebook",
     "instagram", "twitter", "chase", "bankofamerica", "wellsfargo", "binance",
@@ -34,34 +44,27 @@ TARGET_BRANDS = [
     "telegram", "whatsapp", "citibank", "capitalone", "yahoo", "github"
 ]
 
-# Common leetspeak / homoglyph character substitutions
 HOMOGLYPH_MAP = {
-    '1': 'l', '0': 'o', '5': 's', '3': 'e', '4': 'a', '@': 'a', '$': 's', '8': 'b', 'vv': 'w'
+    '1': 'l', '0': 'o', '5': 's', '3': 'e', '4': 'a', '@': 'a', '$': 's', '8': 'b'
 }
 
 def normalize_homoglyphs(text: str) -> str:
-    """Normalizes typical digit/symbol leet substitutions."""
     result = text.lower()
     for leet, norm in HOMOGLYPH_MAP.items():
         result = result.replace(leet, norm)
     return result
 
 def shannon_entropy(data: str) -> float:
-    """Calculates the Shannon entropy of a string."""
     if not data:
         return 0.0
-    entropy = 0.0
     length = len(data)
     frequencies = {}
     for char in data:
         frequencies[char] = frequencies.get(char, 0) + 1
-    for count in frequencies.values():
-        p_x = count / length
-        entropy += - p_x * math.log2(p_x)
-    return round(entropy, 4)
+    entropy = sum(- (count / length) * math.log2(count / length) for count in frequencies.values())
+    return round(entropy, 9)
 
 def levenshtein_ratio(s1: str, s2: str) -> float:
-    """Computes normalized similarity ratio between two strings using Levenshtein distance."""
     s1, s2 = s1.lower(), s2.lower()
     if s1 == s2:
         return 1.0
@@ -79,25 +82,22 @@ def levenshtein_ratio(s1: str, s2: str) -> float:
         for j in range(1, len2 + 1):
             cost = 0 if s1[i-1] == s2[j-1] else 1
             matrix[i][j] = min(
-                matrix[i-1][j] + 1,       # deletion
-                matrix[i][j-1] + 1,       # insertion
-                matrix[i-1][j-1] + cost   # substitution
+                matrix[i-1][j] + 1,
+                matrix[i][j-1] + 1,
+                matrix[i-1][j-1] + cost
             )
             
     dist = matrix[len1][len2]
     max_len = max(len1, len2)
     return round(1.0 - (dist / max_len), 4)
 
-def check_ip_address(hostname: str) -> int:
-    """Detects if hostname is a plain IPv4, IPv6, or obfuscated IP format."""
-    clean_host = hostname.strip("[]")
+def check_ip_address(host: str) -> int:
+    clean_host = host.split(':')[0].strip("[]")
     try:
         ipaddress.ip_address(clean_host)
         return 1
     except ValueError:
         pass
-    
-    # Check for hex/octal encoded IP
     if re.match(r"^0x[0-9a-fA-F]+(\.0x[0-9a-fA-F]+){3}$", clean_host):
         return 1
     if re.match(r"^\d{8,11}$", clean_host):
@@ -105,83 +105,99 @@ def check_ip_address(hostname: str) -> int:
     return 0
 
 def extract_url_features(url: str) -> dict:
-    """
-    Extracts comprehensive engineered security features from a URL for ML classification.
-    """
     url_clean = url.strip()
     if not re.match(r'^[a-zA-Z]+://', url_clean):
         url_full = 'http://' + url_clean
     else:
         url_full = url_clean
 
-    try:
-        parsed = urlparse(url_full)
-    except Exception:
-        parsed = urlparse('http://' + url_clean)
-
-    hostname = (parsed.hostname or "").lower()
-    path = parsed.path or ""
+    parsed = urlparse(url_full)
+    netloc = parsed.netloc.split('@')[-1]
+    raw_host = (parsed.hostname or "").lower()
+    host_no_port = netloc.split(':')[0].lower()
+    path = parsed.path or "/"
     query = parsed.query or ""
-    scheme = (parsed.scheme or "").lower()
 
-    # Domain & TLD extraction
-    domain_parts = hostname.split('.')
-    tld = domain_parts[-1] if len(domain_parts) > 1 else ""
-    subdomains = domain_parts[:-2] if len(domain_parts) > 2 else []
+    # 1. URL length
+    url_length = len(url_full)
 
-    # 1. Length metrics
-    url_len = len(url_full)
-    host_len = len(hostname)
-    path_len = len(path)
+    # 2. IP address
+    has_ip = check_ip_address(host_no_port)
 
-    # 2. Character counts
-    dots = url_full.count('.')
-    hyphens = url_full.count('-')
-    ats = url_full.count('@')
-    questions = url_full.count('?')
-    equals = url_full.count('=')
-    percents = url_full.count('%')
-    slashes = url_full.count('/')
-    digits = sum(c.isdigit() for c in url_full)
-    digit_ratio = round(digits / url_len, 4) if url_len > 0 else 0.0
+    # 3. Dot count
+    dot_count = url_full.count('.')
 
-    # 3. Subdomain count
-    subdomain_count = len(subdomains)
+    # 4. HTTPS flag
+    https_flag = 1 if url_full.startswith("https://") else 0
 
-    # 4. Host checks
-    has_ip = check_ip_address(hostname)
-    is_short = 1 if hostname in URL_SHORTENERS else 0
-    has_puny = 1 if "xn--" in hostname or any(ord(c) > 127 for c in hostname) else 0
+    # 5. Shannon Entropy
+    url_entropy = shannon_entropy(url_full)
 
-    # 5. Suspicious keywords in whole URL
+    # 6. Token count
+    tokens = [t for t in re.split(r'[:/._\-?=&]', url_full) if t]
+    token_count = max(len(tokens), 1)
+
+    # Netloc parts for domain / TLD / subdomains
+    netloc_parts = netloc.split('.')
+    if has_ip:
+        subdomain_count = max(0, len(netloc_parts) - 2)
+        domain_name = netloc_parts[-2] if len(netloc_parts) >= 2 else netloc_parts[0]
+        tld = netloc_parts[-1] if len(netloc_parts) >= 2 else ""
+    else:
+        host_parts = host_no_port.split('.')
+        tld = host_parts[-1] if len(host_parts) >= 2 else ""
+        domain_name = host_parts[-2] if len(host_parts) >= 2 else host_parts[0]
+        subdomain_count = len(host_parts) - 2 if len(host_parts) > 2 else 0
+
+    # 8. Query param count
+    if query:
+        query_param_count = len([q for q in re.split(r'&|&amp;', query) if q])
+    else:
+        query_param_count = 1
+
+    # 9. TLD length
+    tld_length = len(tld)
+
+    # 10. Path length
+    path_length = len(path)
+
+    # 11. Has hyphen in domain
+    has_hyphen = 1 if '-' in host_no_port else 0
+
+    # 12. Number of digits
+    number_of_digits = sum(c.isdigit() for c in url_full)
+
+    # 13. TLD popularity
+    clean_tld = tld.split(':')[0].lower()
+    tld_popularity = 1 if clean_tld in POPULAR_TLDS else 0
+
+    # 14. Suspicious file extension
+    path_lower = path.lower()
+    suspicious_ext = 1 if any(path_lower.endswith(ext) for ext in SUSPICIOUS_EXTENSIONS) else 0
+
+    # 15. Domain name length
+    domain_name_length = len(domain_name)
+
+    # 16. Percentage numeric chars
+    percentage_numeric_chars = round((number_of_digits / url_length) * 100, 8) if url_length > 0 else 0.0
+
+    # Auxiliary metadata for UI explainability & risk scoring
     url_lower = url_full.lower()
     keyword_matches = [kw for kw in SUSPICIOUS_KEYWORDS if kw in url_lower]
-    suspicious_keyword_count = len(keyword_matches)
-
-    # 6. HTTPS indicator
-    is_https = 1 if scheme == "https" else 0
-
-    # 7. Suspicious TLD
-    is_suspicious_tld = 1 if tld in SUSPICIOUS_TLDS else 0
-
-    # 8. Typosquatting / Impersonation similarity check
+    
+    # Typosquatting / brand similarity
     max_similarity = 0.0
     matched_target = None
-    main_domain = domain_parts[-2] if len(domain_parts) >= 2 else hostname
-    
-    # Split domain into tokens (e.g. "paypa1-security-verification" -> ["paypa1", "security", "verification"])
-    domain_tokens = [t for t in re.split(r'[-_]', main_domain) if t] + [main_domain]
+    domain_tokens = [t for t in re.split(r'[-_]', domain_name) if t] + [domain_name]
 
     for target in TARGET_BRANDS:
-        # Check direct brand substring
-        if target in hostname and hostname not in [f"{target}.com", f"www.{target}.com"]:
+        if target in host_no_port and host_no_port not in [f"{target}.com", f"www.{target}.com"]:
             sim = 0.95
             if sim > max_similarity:
                 max_similarity = sim
                 matched_target = target
             continue
 
-        # Check tokens against target
         for token in domain_tokens:
             sim_raw = levenshtein_ratio(token, target)
             norm_token = normalize_homoglyphs(token)
@@ -192,78 +208,30 @@ def extract_url_features(url: str) -> dict:
                 max_similarity = best_token_sim
                 matched_target = target
 
-    # Only flag as typosquat if not the exact legitimate brand domain
-    if max_similarity >= 0.70:
-        if hostname in [f"{matched_target}.com", f"www.{matched_target}.com"]:
-            max_similarity = 0.0
-            matched_target = None
-
-    # 9. Shannon Entropy
-    entropy = shannon_entropy(url_full)
-
-    # 10. Path depth and double slashes
-    path_segments = [s for s in path.split('/') if s]
-    path_depth = len(path_segments)
-    has_double_slash_redirect = 1 if '//' in path else 0
-
-    # 11. Sensitive extension
-    sensitive_exts = {".exe", ".scr", ".zip", ".iso", ".apk", ".bin", ".msi", ".dmg", ".ps1", ".bat"}
-    has_sensitive_ext = 1 if any(path.lower().endswith(ext) for ext in sensitive_exts) else 0
+    if max_similarity >= 0.70 and host_no_port in [f"{matched_target}.com", f"www.{matched_target}.com"]:
+        max_similarity = 0.0
+        matched_target = None
 
     return {
-        "url_length": url_len,
-        "domain_length": host_len,
-        "path_length": path_len,
-        "count_dots": dots,
-        "count_hyphens": hyphens,
-        "count_at": ats,
-        "count_question": questions,
-        "count_equal": equals,
-        "count_percent": percents,
-        "count_slash": slashes,
-        "count_digits": digits,
-        "digit_ratio": digit_ratio,
-        "count_subdomains": subdomain_count,
-        "has_ip": has_ip,
-        "is_shortened": is_short,
-        "has_punycode": has_puny,
-        "suspicious_keyword_count": suspicious_keyword_count,
-        "is_https": is_https,
-        "suspicious_tld": is_suspicious_tld,
-        "typosquat_similarity": max_similarity,
-        "entropy": entropy,
-        "path_depth": path_depth,
-        "has_double_slash_redirect": has_double_slash_redirect,
-        "has_sensitive_extension": has_sensitive_ext,
-        # Metadata helpers for explanation
-        "_hostname": hostname,
+        "url_length": url_length,
+        "has_ip_address": has_ip,
+        "dot_count": dot_count,
+        "https_flag": https_flag,
+        "url_entropy": url_entropy,
+        "token_count": token_count,
+        "subdomain_count": subdomain_count,
+        "query_param_count": query_param_count,
+        "tld_length": tld_length,
+        "path_length": path_length,
+        "has_hyphen_in_domain": has_hyphen,
+        "number_of_digits": number_of_digits,
+        "tld_popularity": tld_popularity,
+        "suspicious_file_extension": suspicious_ext,
+        "domain_name_length": domain_name_length,
+        "percentage_numeric_chars": percentage_numeric_chars,
+        # Metadata
+        "_hostname": host_no_port,
         "_matched_target": matched_target,
-        "_matched_keywords": keyword_matches
+        "_matched_keywords": keyword_matches,
+        "_typosquat_similarity": max_similarity
     }
-
-FEATURE_COLUMNS = [
-    "url_length",
-    "domain_length",
-    "path_length",
-    "count_dots",
-    "count_hyphens",
-    "count_at",
-    "count_question",
-    "count_equal",
-    "count_percent",
-    "count_slash",
-    "count_digits",
-    "digit_ratio",
-    "count_subdomains",
-    "has_ip",
-    "is_shortened",
-    "has_punycode",
-    "suspicious_keyword_count",
-    "is_https",
-    "suspicious_tld",
-    "typosquat_similarity",
-    "entropy",
-    "path_depth",
-    "has_double_slash_redirect",
-    "has_sensitive_extension"
-]
