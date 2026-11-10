@@ -1,0 +1,11 @@
+{
+  "include": [
+    "backend"
+  ],
+  "pythonPath": "D:\\Python314\\python.exe",
+  "extraPaths": [
+    "backend",
+    "D:\\Python314\\Lib\\site-packages"
+  ]
+}
+
