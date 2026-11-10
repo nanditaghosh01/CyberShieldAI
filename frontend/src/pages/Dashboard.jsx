@@ -70,27 +70,27 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Top Welcome / Hero Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-[#122035] via-[#182b45] to-[#122035] border border-[#274366] p-6 sm:p-7 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+      <div className="rounded-2xl bg-[#122035] border border-[#274366] p-4 sm:p-6 lg:p-7 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#a9d8de]" />
-              <span className="text-xs font-medium text-[#a9d8de]">
+              <span className="text-xs font-semibold text-[#a9d8de]">
                 Website Trust & Safety Center
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#f3fbf0] tracking-tight">
+            <h2 className="text-lg sm:text-2xl font-bold text-[#f3fbf0] tracking-tight">
               Know if a website is safe before you click
             </h2>
-            <p className="text-xs sm:text-sm text-[#a9d8de]/80 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#a9d8de]/85 max-w-2xl leading-relaxed">
               Check links for phishing scams, fake banking logins, and malicious downloads. We verify the actual SSL certificate, domain history, and public community reports in real time.
             </p>
           </div>
           <button
             onClick={() => onSelectTab('scanner')}
-            className="self-start md:self-auto flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#457b9d] hover:bg-[#a9d8de] text-[#0b1523] font-semibold text-sm shadow-sm hover:shadow transition-all transform active:scale-95 shrink-0"
+            className="self-start md:self-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#457b9d] hover:bg-[#a9d8de] text-[#0b1523] font-bold text-xs sm:text-sm shadow-sm transition-all transform active:scale-95 shrink-0 w-full sm:w-auto"
           >
             <span>Scan a Website</span>
             <ArrowRight className="w-4 h-4" />
@@ -98,8 +98,8 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
         </div>
       </div>
 
-      {/* Metric Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+      {/* Metric Cards Grid: Responsive across Mobile (2-col), Tablet (3-col), PC (5-col) */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         <MetricCard
           title="Links Inspected"
           value={stats?.total_scanned ?? 0}
@@ -112,51 +112,53 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
           value={stats?.phishing_detected ?? 0}
           icon={AlertTriangle}
           color="red"
-          subtitle="Fake logins & cloned portals"
+          subtitle="Fake logins & clones"
         />
         <MetricCard
           title="Malicious Sites"
           value={stats?.malicious_detected ?? 0}
           icon={Skull}
           color="deepRed"
-          subtitle="Confirmed malware & exploits"
+          subtitle="Confirmed exploits"
         />
         <MetricCard
           title="Verified Safe"
           value={stats?.secure_analyzed ?? 0}
           icon={CheckCircle}
           color="honeydew"
-          subtitle="Clean and verified safe"
+          subtitle="Clean and verified"
         />
-        <MetricCard
-          title="Needs Attention"
-          value={stats?.requiring_attention ?? 0}
-          icon={Shield}
-          color="steel"
-          subtitle="Weak security or missing SSL"
-        />
+        <div className="col-span-2 md:col-span-1">
+          <MetricCard
+            title="Needs Attention"
+            value={stats?.requiring_attention ?? 0}
+            icon={Shield}
+            color="steel"
+            subtitle="Weak security or missing SSL"
+          />
+        </div>
       </div>
 
-      {/* Visual Charts Row */}
+      {/* Visual Charts Row: Tablet & PC side-by-side, Mobile stacked */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Threat Distribution Donut */}
-        <div className="lg:col-span-5 rounded-2xl bg-[#122035] border border-[#274366] p-5 shadow-sm">
+        <div className="lg:col-span-5 rounded-2xl bg-[#122035] border border-[#274366] p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-semibold text-[#f3fbf0]">Website Safety Breakdown</h3>
-              <p className="text-xs text-[#a9d8de]/75">Categorization across all analyzed links</p>
+              <p className="text-[11px] sm:text-xs text-[#a9d8de]/75">Categorization across all analyzed links</p>
             </div>
             <Activity className="w-4 h-4 text-[#a9d8de]" />
           </div>
-          <div className="h-60">
+          <div className="h-56 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={threatData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
+                  innerRadius={55}
+                  outerRadius={75}
                   paddingAngle={4}
                   dataKey="value"
                 >
@@ -172,7 +174,7 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
                   verticalAlign="bottom" 
                   height={32} 
                   iconType="circle" 
-                  formatter={(val) => <span className="text-xs text-[#a9d8de]">{val}</span>}
+                  formatter={(val) => <span className="text-[11px] sm:text-xs text-[#a9d8de]">{val}</span>}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -180,21 +182,21 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
         </div>
 
         {/* Risk Level Distribution Bar Chart */}
-        <div className="lg:col-span-7 rounded-2xl bg-[#122035] border border-[#274366] p-5 shadow-sm">
+        <div className="lg:col-span-7 rounded-2xl bg-[#122035] border border-[#274366] p-4 sm:p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="text-sm font-semibold text-[#f3fbf0]">Overall Risk Score Distribution</h3>
-              <p className="text-xs text-[#a9d8de]/75">From 0 (clean & verified) to 100 (critical threat)</p>
+              <h3 className="text-sm font-semibold text-[#f3fbf0]">Risk Score Distribution</h3>
+              <p className="text-[11px] sm:text-xs text-[#a9d8de]/75">From 0 (clean & safe) to 100 (critical threat)</p>
             </div>
-            <span className="text-xs text-[#a9d8de] bg-[#182b45] px-2.5 py-0.5 rounded-full border border-[#274366]">
+            <span className="text-[11px] text-[#a9d8de] bg-[#182b45] px-2.5 py-0.5 rounded-full border border-[#274366]">
               Risk Range
             </span>
           </div>
-          <div className="h-60">
+          <div className="h-56 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={riskBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <XAxis dataKey="range" stroke="#457b9d" fontSize={11} tickLine={false} />
-                <YAxis stroke="#457b9d" fontSize={11} tickLine={false} />
+                <XAxis dataKey="range" stroke="#457b9d" fontSize={10} tickLine={false} />
+                <YAxis stroke="#457b9d" fontSize={10} tickLine={false} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0b1523', borderColor: '#274366', borderRadius: '8px', fontSize: '12px', color: '#f3fbf0' }}
                   itemStyle={{ color: '#f3fbf0' }}
@@ -207,25 +209,23 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
       </div>
 
       {/* Motivating Security Incident Banner: eMudhra CA Case Study */}
-      <div className="rounded-2xl bg-[#182b45] border border-[#274366] p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+      <div className="rounded-2xl bg-[#182b45] border border-[#274366] p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-xl bg-[#122035] border border-[#274366] text-[#a9d8de] mt-0.5">
+          <div className="p-2 rounded-xl bg-[#122035] border border-[#274366] text-[#a9d8de] mt-0.5 shrink-0">
             <Lock className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-[#a9d8de]">
-                Why HTTPS alone isn't proof of safety: The eMudhra incident
-              </span>
-            </div>
-            <p className="text-xs text-[#f3fbf0]/80 mt-1 max-w-3xl leading-relaxed">
+            <span className="text-xs font-semibold text-[#a9d8de] block mb-1">
+              Why HTTPS alone isn't proof of safety: The eMudhra incident
+            </span>
+            <p className="text-xs text-[#f3fbf0]/85 leading-relaxed">
               Many phishing sites now have valid SSL certificates and display a green padlock. Incidents like eMudhra showed that unauthorized intermediate certificates can make fraudulent portals look authentic. CyberShield verifies issuing authorities, key lengths, and Certificate Transparency (CT) records rather than assuming a lock icon means trust.
             </p>
           </div>
         </div>
         <button
           onClick={() => onSelectTab('ssl')}
-          className="whitespace-nowrap px-4 py-2 rounded-xl bg-[#122035] hover:bg-[#1d3557] text-[#f3fbf0] text-xs font-medium border border-[#274366] hover:border-[#457b9d] transition-all flex items-center gap-1.5 shrink-0"
+          className="whitespace-nowrap px-4 py-2 rounded-xl bg-[#122035] hover:bg-[#1d3557] text-[#f3fbf0] text-xs font-medium border border-[#274366] hover:border-[#457b9d] transition-all flex items-center justify-center gap-1.5 shrink-0 w-full sm:w-auto"
         >
           <span>Learn More</span>
           <ExternalLink className="w-3.5 h-3.5 text-[#a9d8de]" />
@@ -233,25 +233,25 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
       </div>
 
       {/* Recent Scans and Community Feeds Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
         {/* Recent Scans Table */}
-        <div className="lg:col-span-7 rounded-xl bg-[#122035] border border-[#274366] p-5 shadow-[0_0_20px_rgba(0,0,0,0.2)]">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-7 rounded-2xl bg-[#122035] border border-[#274366] p-4 sm:p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3.5">
             <div>
-              <h3 className="text-sm font-bold text-[#f3fbf0] tracking-wide">Recent Security Scans</h3>
+              <h3 className="text-sm font-bold text-[#f3fbf0] tracking-tight">Recent Security Scans</h3>
               <p className="text-xs text-[#a9d8de]/70">Latest inspected targets and calculated risk levels</p>
             </div>
             <button
               onClick={() => onSelectTab('history')}
-              className="text-xs text-[#a9d8de] hover:text-[#f3fbf0] font-medium flex items-center gap-1"
+              className="text-xs text-[#a9d8de] hover:text-[#f3fbf0] font-medium flex items-center gap-1 shrink-0"
             >
               <span>View All</span>
               <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <table className="w-full text-left text-xs min-w-[480px]">
               <thead className="text-[#a9d8de] border-b border-[#274366] bg-[#0b1523]">
                 <tr>
                   <th className="py-2.5 px-3 font-semibold">Target Domain / URL</th>
@@ -264,7 +264,7 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
                 {recentScans.length > 0 ? (
                   recentScans.map((scan) => (
                     <tr key={scan.id} className="hover:bg-[#182b45]/50 transition-colors">
-                      <td className="py-2.5 px-3 font-mono text-[#f3fbf0] truncate max-w-xs">
+                      <td className="py-2.5 px-3 font-mono text-[#f3fbf0] truncate max-w-[180px] sm:max-w-xs">
                         {scan.domain || scan.url}
                       </td>
                       <td className="py-2.5 px-3">
@@ -279,7 +279,7 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
                       <td className="py-2.5 px-3 text-right">
                         <button
                           onClick={() => onOpenScan && onOpenScan(scan)}
-                          className="px-2 py-1 rounded bg-[#182b45] hover:bg-[#457b9d] text-[#f3fbf0] border border-[#274366] hover:border-[#a9d8de] text-[11px] font-medium transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-[#182b45] hover:bg-[#457b9d] text-[#f3fbf0] border border-[#274366] text-[11px] font-medium transition-colors"
                         >
                           Details
                         </button>
@@ -299,15 +299,15 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
         </div>
 
         {/* Recent Community Reports Feed */}
-        <div className="lg:col-span-5 rounded-xl bg-[#122035] border border-[#274366] p-5 shadow-[0_0_20px_rgba(0,0,0,0.2)]">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-5 rounded-2xl bg-[#122035] border border-[#274366] p-4 sm:p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3.5">
             <div>
-              <h3 className="text-sm font-bold text-[#f3fbf0] tracking-wide">Community Threat Intelligence</h3>
+              <h3 className="text-sm font-bold text-[#f3fbf0] tracking-tight">Community Threat Watch</h3>
               <p className="text-xs text-[#a9d8de]/70">Crowdsourced submissions & status verification</p>
             </div>
             <button
               onClick={() => onSelectTab('community')}
-              className="text-xs text-[#a9d8de] hover:text-[#f3fbf0] font-medium flex items-center gap-1"
+              className="text-xs text-[#a9d8de] hover:text-[#f3fbf0] font-medium flex items-center gap-1 shrink-0"
             >
               <span>Submit Report</span>
               <ArrowRight className="w-3 h-3" />
@@ -317,14 +317,14 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
           <div className="space-y-3">
             {recentReports.length > 0 ? (
               recentReports.map((report) => (
-                <div key={report.id} className="p-3 rounded-lg bg-[#0b1523] border border-[#274366] hover:border-[#457b9d] transition-colors">
+                <div key={report.id} className="p-3.5 rounded-xl bg-[#0b1523] border border-[#274366] hover:border-[#457b9d] transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <span className="text-xs font-mono font-semibold text-[#f3fbf0] truncate">
                       {report.url}
                     </span>
                     <ThreatBadge category={report.status} size="sm" />
                   </div>
-                  <p className="text-[11px] text-[#a9d8de]/80 line-clamp-2">
+                  <p className="text-[11px] text-[#a9d8de]/85 line-clamp-2">
                     {report.description}
                   </p>
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#274366]/60 text-[10px] text-[#a9d8de]/70 font-mono">
@@ -342,4 +342,3 @@ export const Dashboard = ({ onSelectTab, onOpenScan }) => {
     </div>
   );
 };
-

@@ -104,8 +104,8 @@ export const ScanHistory = ({ onOpenScan }) => {
 
       {/* History Table Card */}
       <div className="rounded-2xl bg-[#122035] border border-[#274366] overflow-hidden shadow-lg">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table className="w-full text-left text-xs min-w-[620px]">
             <thead className="bg-[#0b1523] text-[#a9d8de] border-b border-[#274366]">
               <tr>
                 <th className="py-3.5 px-4 font-semibold">Web Address / Target</th>

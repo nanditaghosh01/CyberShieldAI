@@ -21,8 +21,8 @@ export const ScanProgressModal = ({ url }) => {
   }, [steps.length]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-[#122035] border border-[#274366] p-6 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3.5 sm:p-4">
+      <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[#122035] border border-[#274366] p-4 sm:p-6 shadow-2xl relative">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2.5 rounded-xl bg-[#182b45] border border-[#457b9d]/60 text-[#a9d8de]">
             <Loader2 className="w-5 h-5 animate-spin text-[#a9d8de]" />

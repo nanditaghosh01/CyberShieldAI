@@ -210,7 +210,7 @@ export const URLScanner = ({ initialResult = null }) => {
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <h3 className="text-lg sm:text-xl font-bold text-[#f3fbf0] font-mono truncate max-w-xl">
+                <h3 className="text-base sm:text-xl font-bold text-[#f3fbf0] font-mono truncate max-w-[200px] sm:max-w-md lg:max-w-xl">
                   {scanResult.url}
                 </h3>
                 <button
@@ -247,7 +247,7 @@ export const URLScanner = ({ initialResult = null }) => {
           </div>
 
           {/* Result Sub-Navigation Tabs */}
-          <div className="flex overflow-x-auto gap-1.5 border-b border-[#274366] pb-2">
+          <div className="flex overflow-x-auto gap-1.5 border-b border-[#274366] pb-2 -mx-3.5 sm:mx-0 px-3.5 sm:px-0">
             {[
               { id: 'overview', label: 'Summary & Risk Factors', icon: ShieldCheck },
               { id: 'ai-detection', label: 'Phishing Detection', icon: Scan },
@@ -588,8 +588,8 @@ export const URLScanner = ({ initialResult = null }) => {
               {/* Security Headers Table */}
               <div className="rounded-xl bg-[#122035] border border-[#274366] p-5">
                 <h4 className="text-sm font-bold text-[#f3fbf0] mb-3">HTTP Security Headers Evaluation</h4>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
+                <div className="overflow-x-auto -mx-3.5 sm:mx-0 px-3.5 sm:px-0">
+                  <table className="w-full text-left text-xs min-w-[550px]">
                     <thead className="bg-[#0b1523] text-[#a9d8de] border-b border-[#274366]">
                       <tr>
                         <th className="py-2.5 px-3 font-semibold">Header Name</th>
